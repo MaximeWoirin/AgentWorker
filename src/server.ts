@@ -11,7 +11,7 @@ server.registerTool(
     description: 'Schedule a new Copilot task for the agent to run at a specific time.',
     inputSchema: {
       prompt: z.string().min(1, 'Prompt is required'),
-      scheduled_at: z.string().datetime({ message: 'Must be ISO datetime' }),
+      scheduled_at: z.iso.datetime({ message: 'Must be ISO datetime' }),
       context: z.string().optional(),
       recurrence: z.enum(['daily', 'weekly']).nullable().optional(),
     },
