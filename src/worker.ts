@@ -2,6 +2,7 @@ import { getPendingTasks, updateTaskStatus, createTask, TaskRecurrence } from '.
 import fs from 'fs';
 import path from 'path';
 import { execFileSync } from 'child_process';
+import { sendNotification } from './notifier.js';
 
 const LOG_PATH = path.resolve('logs/agent-worker.md');
 const INTERVAL = parseInt(process.env.WORKER_INTERVAL_MS || '60000', 10);
@@ -61,6 +62,7 @@ export function startWorker(): NodeJS.Timeout {
         const status = output.startsWith('[ERROR]') ? 'failed' : 'completed';
         appendLog({ id: task.id, status, prompt: task.prompt, context: task.context, output });
         updateTaskStatus(task.id, status);
+        sendNotification(task.id, status, output);
         if (status === 'completed' && (task.recurrence === 'daily' || task.recurrence === 'weekly')) {
           scheduleNext(task);
         }
